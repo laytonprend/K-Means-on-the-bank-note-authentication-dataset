@@ -1,0 +1,46 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+
+data=pd.read_csv('Banknote Authentication dataset.csv')
+plt.xlabel('V1')
+plt.ylabel('V2')
+#print(data.head()) 
+X = data[['V1', 'V2']] 
+### changing scaler
+scale = StandardScaler()
+scale.fit(X)
+X_scaled = scale.transform(X)
+#print(X_scaled[:][1])
+##
+from sklearn.cluster import KMeans
+kmeans = KMeans(n_clusters=7)
+kmeans.fit(X_scaled)
+y_pred = kmeans.predict(X_scaled)
+
+plt.scatter(X_scaled[:,0], 
+            X_scaled[:,1],
+            c= y_pred)
+plt.scatter(kmeans.cluster_centers_[:, 0],
+            kmeans.cluster_centers_[:, 1], 
+            marker="*",
+            s = 250, 
+            c = [0,1,2,3,4,5,6], #when more colours extend by a number
+            edgecolors='k')
+plt.title('k-means (k=4)')
+plt.show()
+#k elbow method
+import numpy as np
+# calculate distortion for a range of number of cluster
+inertia = []
+for i in np.arange(1, 11):
+    km = KMeans(
+        n_clusters=i
+    )
+    km.fit(X_scaled)
+    inertia.append(km.inertia_)
+# plot
+plt.plot(np.arange(1, 11), inertia, marker='o')
+plt.xlabel('Number of clusters')
+plt.ylabel('Inertia')
+plt.show()
